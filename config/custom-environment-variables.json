@@ -1,3 +1,6 @@
 {
-  "db": "ts_db"
+  "db": "ts_db",
+  "jwtExpiresIn": "ts_jwtExpiresIn",
+  "jwtCookieExpire": "ts_jwtCookieExpire",
+  "jwtPrivateKey": "ts_jwtPrivateKey"
 }
