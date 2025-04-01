@@ -1,0 +1,43 @@
+{
+  "name": "techsoluxapi",
+  "version": "1.0.0",
+  "description": "apis for an e-commerce application (mobile mainly)",
+  "main": "techsoluxapi.js",
+  "author": "akim ayena",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "colors": "^1.4.0",
+    "compression": "^1.8.0",
+    "config": "^3.3.12",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-async-handler": "^1.2.0",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
+    "joi": "^17.13.3",
+    "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.13.1",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^2.10.0",
+    "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.9"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/test/**",
+      "**/docs/**"
+    ],
+    "delay": 2500
+  },
+  "scripts": {
+    "start": "node techsoluxapi.js",
+    "dev": "nodemon --exec node techsoluxapi.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
