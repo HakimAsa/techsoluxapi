@@ -6,10 +6,7 @@ const env = process.env.NODE_ENV || 'development'
 
 require('./startup/db')()
 require('./startup/config')()
-app.get('/', (req, res) => {
-  res.send('Hello Tech Solux E-commerce API!')
-})
-
+require('./startup/routes')(app)
 const server = app.listen(port, () => {
   console.log(
     `Example app listening on port ${port} in ${env} mode...`.yellow.underline

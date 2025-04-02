@@ -97,7 +97,17 @@ function validateUser(user) {
     username: Joi.string().min(3).max(50),
     email: Joi.string().min(5).max(255).email(),
     password: Joi.string().min(8).max(255).required(),
-    confirmpassword: Joi.ref('password'), // make sure password and confirmPassword match
+    confirmpassword: Joi.when('password', {
+      is: Joi.exist(),
+      then: Joi.string()
+        .equal(Joi.ref('password'))
+        .required()
+        .label('Confirm password')
+        .messages({
+          'any.only': '{{#label}} does not match',
+        }),
+      otherwise: Joi.string().optional(),
+    }), // make sure password and confirmPassword match
     role: Joi.string().valid('admin', 'user').default('user'),
   }).or('email', 'username')
   return schema.validate(user)
