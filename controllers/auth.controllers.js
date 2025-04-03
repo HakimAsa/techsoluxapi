@@ -19,11 +19,11 @@ const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password, role } = req.body
   const user = await User.findOne({ $or: [{ email }, { username }] })
   if (user) {
-    if (user.email === email)
+    if (email && user.email === email)
       return res
         .status(400)
         .send({ success: false, message: 'Email already exists.' })
-    if (user.username === username)
+    if (username && user.username === username)
       return res
         .status(400)
         .send({ success: false, message: 'Username already exists.' })

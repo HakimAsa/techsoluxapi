@@ -11,13 +11,15 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: true,
+      minlength: 3,
+      maxlength: 50,
     },
     email: {
       type: String,
-      required: true,
       trim: true,
+      //   lowercase: true,
       unique: true,
+      sparse: true, // Allows multiple documents with null email
     },
     password: {
       type: String,
@@ -58,6 +60,15 @@ const userSchema = new Schema(
   }
 )
 
+// Custom validation: Ensure at least one of username or email is provided
+userSchema.path('username').validate(function (value) {
+  return value || this.email // One of them must be present
+}, 'Either username or email is required.')
+
+userSchema.path('email').validate(function (value) {
+  return value || this.username
+}, 'Either username or email is required.')
+
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
@@ -89,6 +100,13 @@ userSchema.methods.generatePasswordResetToken = function () {
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
+
+userSchema.pre('save', function (next) {
+  if (!this.username && !this.email) {
+    return next(new Error('Either username or email must be provided.'))
+  }
+  next()
+})
 
 const User = mongoose.model('User', userSchema)
 
