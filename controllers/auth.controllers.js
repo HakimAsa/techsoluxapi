@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const Joi = require('joi')
 
 const { validate, User } = require('../models/user.models')
+const fourOfour = require('../utils/404')
 
 // @desc register a user
 // @route POST /api/v1/auth/register
@@ -82,6 +83,69 @@ const logout = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: 'Logged out successfully' })
 })
 
+// @desc update password
+// @route PUT /api/v1/auth/updatepassword
+// @access Private
+const updatePassword = asyncHandler(async (req, res) => {
+  // validate request body
+  const { error } = validateOnPasswordUpdate(req.body)
+  if (error)
+    return res
+      .status(400)
+      .send({ success: false, message: error.details[0].message })
+  const user = await User.findById(req.user._id).select('+password')
+  //Check current password
+  if (!(await user.matchPassword(req.body.currentpassword)))
+    return res.status(401).send('Password is incorrect!')
+  // hash password in body request
+  const salt = await bcrypt.genSalt(10)
+  user.password = await bcrypt.hash(req.body.newpassword, salt)
+
+  //TODO AVOID NEWPASSWORD === CURRENTPASSWORD
+
+  //saving user password to db
+  await user.save()
+  sendTokenResponse(user, 200, res)
+  //res.send({ success: true, data: user });
+})
+
+// @desc Forgot password
+// @route POST /api/v1/auth/forgotpassword
+// @access Public for client
+const forgotPassword = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ email: req.body.email })
+  if (!user) return res.status(404).send(fourOfour(CONS.USER, req.body.email))
+
+  // Get reset token
+  const resetToken = user.getResetPasswordToken()
+  await user.save({ validateBeforeSave: false })
+
+  // Create reset url
+  const resetUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/auth/resetpassword/${resetToken}`
+
+  const message = `Your are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`
+  const otp = `${Math.floor(10000 + Math.random() * 90000)}`
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Forgort Password reset token',
+
+      message,
+      html: `<p>Enter <b>${otp}</b> to continue`,
+    })
+    res.status(201).send({ success: true, data: 'Email sent' })
+  } catch (err) {
+    console.log(err)
+    user.resetpasswordtoken = undefined
+    user.resetpasswordexpires = undefined
+    await user.save({ validateBeforeSave: false })
+
+    return res.status(500).send('Email could not be sent!')
+  }
+})
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res, message) => {
   const token = user.generateAuthToken()
@@ -115,4 +179,17 @@ function validateOnLogin(req) {
   }).or('username', 'email')
   return schema.validate(req)
 }
-module.exports = { authUser, logout, registerUser }
+function validateOnPasswordUpdate(req) {
+  const schema = {
+    currentpassword: Joi.string().min(8).max(30).required(),
+    newpassword: Joi.string().min(8).max(30).required(),
+  }
+  return schema.validate(req)
+}
+module.exports = {
+  authUser,
+  forgotPassword,
+  logout,
+  registerUser,
+  updatePassword,
+}
