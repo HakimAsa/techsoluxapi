@@ -50,8 +50,28 @@ const userSchema = new Schema(
       type: String,
       default: 'default.jpg',
     },
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
+    bankdetails: {
+      accountnumber: Number,
+      bankname: String,
+      accountholdername: String,
+      accounttype: String,
+      address: String,
+      pan: String,
+      aadhar: String,
+      branch: String,
+      ifsc: String,
+      swiftcode: String,
+      bankaddress: String,
+    },
+    businessaddress: {
+      pincode: Number,
+      address: String,
+      city: String,
+      state: String,
+      country: String,
+    },
+    resetpasswordtoken: String,
+    resetpasswordexpires: Date,
   },
   {
     timestamps: true,
@@ -88,13 +108,13 @@ userSchema.methods.generateAuthToken = function () {
 userSchema.methods.generatePasswordResetToken = function () {
   const resetToken = crypto.randomBytes(20).toString('hex')
   //Hash token and set resetPassoword field
-  this.resetPasswordToken = crypto
+  this.resetpasswordtoken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex')
 
   // set expire
-  this.resetPasswordExpires = Date.now() + 3600000 // 1 hour
+  this.resetpasswordexpires = Date.now() + 3600000 // 1 hour
 }
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
