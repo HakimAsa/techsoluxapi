@@ -12,7 +12,7 @@ const hpp = require('hpp')
 //relative paths
 const { error, notFound } = require('../middleware/error')
 const auth = require('../routes/auth.routes')
-// const files = require('../routes/uploads')
+const files = require('../routes/uploads')
 // const payments = require('../routes/payments')
 // const users = require('../routes/users')
 
@@ -64,7 +64,7 @@ module.exports = function (app) {
 
   // app.use('/api/v1/userImages', express.static('api/userImages')); //todo
   app.use('/api/v1/auth', auth)
-  //   app.use('/api/v1/files', files)
+  app.use('/api/v1/files', files)
   //   app.use('/api/v1/payments', payments)
   //   app.use('/api/v1/users', users)
 

@@ -64,6 +64,9 @@ const productSchema = new Schema(
         default: 0,
       },
     },
+    category: String,
+    color: String,
+    size: String,
     colorVariation: [String],
     totalReviews: {
       type: Number,

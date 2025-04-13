@@ -1,6 +1,11 @@
 {
+  "AWSAccessKeyId": "",
+  "AWS_S3_BUCKET": "",
+  "AWS_S3_BUCKET_REGION": "",
+  "AWSSecretKey": "",
   "db": "",
   "jwtExpiresIn": "",
   "jwtCookieExpire": "",
-  "jwtPrivateKey": ""
+  "jwtPrivateKey": "",
+  "max_file_length": ""
 }

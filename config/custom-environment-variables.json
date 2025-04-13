@@ -1,4 +1,8 @@
 {
+  "AWSAccessKeyId": "ts_AWS_ACCESS_KEY_ID",
+  "AWS_S3_BUCKET": "ts_AWS_S3_BUCKET",
+  "AWS_S3_BUCKET_REGION": "ts_AWS_S3_BUCKET_REGION",
+  "AWSSecretKey": "ts_AWS_SECRET_ACCESS_KEY",
   "db": "ts_db",
   "jwtExpiresIn": "ts_jwtExpiresIn",
   "jwtCookieExpire": "ts_jwtCookieExpire",

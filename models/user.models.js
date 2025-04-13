@@ -92,7 +92,7 @@ userSchema.path('email').validate(function (value) {
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
-      id: this._id,
+      _id: this._id,
       role: this.role,
       email: this.email,
       username: this.username,
