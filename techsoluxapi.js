@@ -7,6 +7,7 @@ const env = process.env.NODE_ENV || 'development'
 require('./startup/db')()
 require('./startup/config')()
 require('./startup/routes')(app)
+require('./startup/prod')(app)
 const server = app.listen(port, () => {
   console.log(
     `Example app listening on port ${port} in ${env} mode...`.yellow.underline
