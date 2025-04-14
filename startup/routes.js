@@ -13,6 +13,7 @@ const hpp = require('hpp')
 const { error, notFound } = require('../middleware/error')
 const auth = require('../routes/auth.routes')
 const files = require('../routes/uploads')
+const products = require('../routes/product.routes')
 // const payments = require('../routes/payments')
 // const users = require('../routes/users')
 
@@ -65,6 +66,7 @@ module.exports = function (app) {
   // app.use('/api/v1/userImages', express.static('api/userImages')); //todo
   app.use('/api/v1/auth', auth)
   app.use('/api/v1/files', files)
+  app.use('/api/v1/products', products)
   //   app.use('/api/v1/payments', payments)
   //   app.use('/api/v1/users', users)
 

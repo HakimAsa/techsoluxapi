@@ -6,5 +6,7 @@
   "db": "ts_db",
   "jwtExpiresIn": "ts_jwtExpiresIn",
   "jwtCookieExpire": "ts_jwtCookieExpire",
-  "jwtPrivateKey": "ts_jwtPrivateKey"
+  "jwtPrivateKey": "ts_jwtPrivateKey",
+  "pageSize": "ts_pageSize",
+  "top": "ts_top"
 }

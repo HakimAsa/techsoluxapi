@@ -10,7 +10,7 @@ const reviewSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: CONS.STR_USER,
+      ref: 'User',
     },
   },
   { timestamps: true }
@@ -24,7 +24,7 @@ const productSchema = new Schema(
     },
     brand: {
       type: String,
-      required: true,
+      // required: true,
     },
     shortDescription: {
       type: String,
@@ -46,14 +46,16 @@ const productSchema = new Schema(
       type: String,
       required: true,
     },
-    stock: {
+    countInStock: {
       type: Number,
       required: true,
     },
-    imageUrl: {
-      type: String,
-      required: true,
-    },
+    image: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     rating: {
       count: {
         type: Number,
@@ -73,6 +75,10 @@ const productSchema = new Schema(
       default: 0,
     },
     reviews: [reviewSchema],
+    sex: Schema.Types.Mixed,
+    subCategory: String,
+    currencySymbol: String,
+    discount: { type: Number, default: 0, min: 0, max: 100 },
   },
   { timestamps: true }
 )

@@ -7,5 +7,7 @@
   "jwtExpiresIn": "",
   "jwtCookieExpire": "",
   "jwtPrivateKey": "",
-  "max_file_length": ""
+  "max_file_length": "",
+  "pageSize": 10,
+  "top": 10
 }

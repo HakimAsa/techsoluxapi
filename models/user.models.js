@@ -42,6 +42,7 @@ const userSchema = new Schema(
       enum: ['admin', 'user'],
       default: 'user',
     },
+    contact: { type: String, default: '+44-784232' },
     isactive: {
       type: Boolean,
       default: true,
