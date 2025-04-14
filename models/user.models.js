@@ -60,7 +60,7 @@ const userSchema = new Schema(
       pan: String,
       aadhar: String,
       branch: String,
-      ifsc: String,
+      ifsccode: String,
       swiftcode: String,
       bankaddress: String,
     },

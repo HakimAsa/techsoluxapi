@@ -2,9 +2,57 @@ const asyncHandler = require('express-async-handler')
 const config = require('config')
 const bcrypt = require('bcryptjs')
 const Joi = require('joi')
+const JoiObjectId = require('joi-objectid')
 
 const { validate, User } = require('../models/user.models')
 const fourOfour = require('../utils/404')
+const upload = require('../utils/upload')
+
+const myJoiObjectId = JoiObjectId(Joi)
+
+const bucket = config.get('AWS_S3_BUCKET')
+
+// @desc get Me
+// @route POST /api/v1/auth/me
+// @access Private
+const getMe = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id)
+
+  if (!user) return res.status(404).send({ message: 'User not found' })
+  return res.status(200).send({ success: true, data: user })
+})
+
+// @desc update user details
+// @route PUT /api/auth/updatedetails
+// @access Private
+const updateDetails = asyncHandler(async (req, res) => {
+  let user = await User.findById(req.user._id).exec()
+  if (!user) return res.status(404).send('user not found!')
+
+  // const { error } = validate(req.body, false)
+  const salt = await bcrypt.genSalt(10)
+
+  const fieldToUpdate = {
+    email: req.body.email ? req.body.email : user.email,
+    contact: req.body.contact ? req.body.contact : user.contact,
+
+    address: req.body.address ? req.body.address : user.address,
+    username: req.body.username ? req.body.username : user.username,
+    password: req.body.password && (await bcrypt.hash(req.body.password, salt)),
+    bankdetails: req.body.bankdetails || user.bankdetails,
+    businessaddress: req.body.businessaddress || user.businessaddress,
+  }
+
+  // if (error) return res.status(400).send(error.details[0].message) //todo
+
+  user = await User.findByIdAndUpdate(req.user._id, fieldToUpdate, {
+    new: true,
+    runValidators: true,
+  })
+  if (!user) return res.status(404).send(fourOfour('User not found'))
+
+  res.status(200).send(user)
+})
 
 // @desc register a user
 // @route POST /api/v1/auth/register
@@ -146,6 +194,41 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc Update Profile Picture
+// @route PATCH /api/v1/auth/updateprofilepicture
+// @access Private
+const updateProfilePicture = asyncHandler(async (req, res) => {
+  const singleUpload = upload(bucket).single('avatar')
+  singleUpload(req, res, async function (err) {
+    req.body.user = req.user._id
+
+    if (!req.file) return res.status(400).send('No File has been selected')
+
+    const { error } = validateAvatar(req.body)
+    if (error) return res.status(400).send(error.details[0].message)
+
+    if (err) {
+      return res.json({
+        success: false,
+        errors: {
+          title: 'Image Upload Error',
+          detail: err.message,
+          error: err,
+        },
+      })
+    }
+    const user = await User.findById(req.user._id)
+    if (!user) return res.status(404).send({ message: 'User not found' })
+    user.avatar = req.file.location
+    await user.save()
+    res.status(200).send({
+      message: 'Avatar  has been updated successfully',
+      avatar: req.file.location,
+      fieldName: req.file.fieldname,
+    })
+  })
+})
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res, message) => {
   const token = user.generateAuthToken()
@@ -186,10 +269,20 @@ function validateOnPasswordUpdate(req) {
   }
   return schema.validate(req)
 }
+function validateAvatar(req, fieldName = 'avatar') {
+  const schema = Joi.object({
+    [fieldName]: Joi.string(),
+    user: myJoiObjectId().required(),
+  })
+  return schema.validate(req)
+}
 module.exports = {
   authUser,
   forgotPassword,
+  getMe,
   logout,
   registerUser,
   updatePassword,
+  updateProfilePicture,
+  updateDetails,
 }
