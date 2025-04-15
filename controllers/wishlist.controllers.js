@@ -9,9 +9,20 @@ const getUserWishlist = asyncHandler(async (req, res) => {
       user: req.user?._id,
       liked: true,
     }).populate('product')
-    const products = wishlist.map((item) => item.product) // extract only products
+    // Filter unique products by _id
+    const uniqueProductsMap = new Map()
+    wishlist.forEach((item) => {
+      const product = item.product
+      if (product && !uniqueProductsMap.has(product._id.toString())) {
+        uniqueProductsMap.set(product._id.toString(), product)
+      }
+    })
 
-    res.json(products) // You can also return `wishlist` if you want more control
+    const uniqueProducts = Array.from(uniqueProductsMap.values())
+
+    return res.json(uniqueProducts)
+
+    // res.json(products) // You can also return `wishlist` if you want more control
   } catch (error) {
     console.error('Error fetching wishlist:', error)
     res.status(500).json({ message: 'Server error while fetching wishlist' })
