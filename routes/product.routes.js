@@ -7,13 +7,15 @@ const {
   createProduct,
 } = require('../controllers/product.controllers.js')
 const role = require('../middleware/role.js')
+const ep = require('../utils/endpoints.js')
+const { doSetForwardslash: dsf } = require('../utils/global.js')
 
 const router = express.Router()
 
 router
-  .route('/')
+  .route(ep.FORWARDSLASH)
   .get(auth, getProducts)
-  .post(auth, role(['admin']), createProduct)
-router.get('/top', auth, getTopRatedProduct)
+  .post(auth, role([ep.ADMIN]), createProduct)
+router.get(dsf(ep.TOP), auth, getTopRatedProduct)
 
 module.exports = router
