@@ -13,12 +13,20 @@ const getUserWishlist = asyncHandler(async (req, res) => {
     const uniqueProductsMap = new Map()
     wishlist.forEach((item) => {
       const product = item.product
-      if (product && !uniqueProductsMap.has(product._id.toString())) {
-        uniqueProductsMap.set(product._id.toString(), product)
+      if (!product) return // safety check
+
+      const id = product._id.toString()
+      if (!uniqueProductsMap.has(id)) {
+        /* clone the product (to avoid mutating the Mongoose doc),
+           then add any extra fields you want to expose */
+        uniqueProductsMap.set(id, {
+          ...product.toObject({ getters: true, virtuals: false }),
+          liked: true, // <-- attach the flag
+        })
       }
     })
-
-    const uniqueProducts = Array.from(uniqueProductsMap.values())
+    // 3. Convert the Map back to an array and return it
+    const uniqueProducts = [...uniqueProductsMap.values()]
 
     return res.json(uniqueProducts)
 

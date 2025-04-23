@@ -1,7 +1,7 @@
 {
   "name": "techsoluxapi",
   "version": "1.0.0",
-  "description": "apis for an e-commerce application (mobile mainly)",
+  "description": "apis for an e-commerce application (mobile & web)",
   "main": "techsoluxapi.js",
   "author": "akim ayena",
   "license": "MIT",

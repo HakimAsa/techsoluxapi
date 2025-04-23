@@ -2,6 +2,23 @@ const express = require('express')
 const mongoSanitize = require('@exortek/express-mongo-sanitize')
 const path = require('path')
 
+//todo generate hash later:
+/**
+ *
+const crypto = require('crypto')
+const fs = require('fs')
+
+const html = fs.readFileSync('./public/index.html', 'utf-8')
+const scriptRegex = /<script>([\s\S]*?)<\/script>/g
+
+let match
+while ((match = scriptRegex.exec(html)) !== null) {
+  const scriptContent = match[1].trim()
+  const hash = crypto.createHash('sha256').update(scriptContent).digest('base64')
+  console.log(`'sha256-${hash}'`)
+}
+ */
+
 const cors = require('cors')
 const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
