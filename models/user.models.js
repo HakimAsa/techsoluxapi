@@ -49,7 +49,8 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String,
-      default: 'default.jpg',
+      default:
+        'https://techsoluxdb.s3.amazonaws.com/file-1745584087391-70165495avatar.png',
     },
     bankdetails: {
       accountnumber: Number,

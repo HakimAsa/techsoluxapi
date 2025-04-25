@@ -66,7 +66,10 @@ const registerUser = asyncHandler(async (req, res) => {
       .send({ success: false, message: error.details[0].message })
 
   const { username, email, password, role } = req.body
-  const user = await User.findOne({ $or: [{ email }, { username }] })
+  const orQuery = []
+  if (email) orQuery.push({ email })
+  if (username) orQuery.push({ username })
+  const user = await User.findOne({ $or: orQuery })
   if (user) {
     if (email && user.email === email)
       return res
@@ -104,10 +107,14 @@ const authUser = asyncHandler(async (req, res) => {
       .send({ success: false, message: error.details[0].message })
 
   const { email, password, username } = req.body
+
+  const orQuery = []
+  if (email) orQuery.push({ email })
+  if (username) orQuery.push({ username })
+
   // check if user exists and password matches
-  const user = await User.findOne({ $or: [{ email }, { username }] }).select(
-    '+password'
-  )
+  const user = await User.findOne({ $or: orQuery }).select('+password')
+
   if (!user || !(await user.matchPassword(password))) {
     return res
       .status(400)
